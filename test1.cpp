@@ -62,6 +62,22 @@ void reverse(node_t **head)
     *head = cursor;
 }
 
+static node_t *rev_resursive(node_t *node)
+{
+    if (!node->next)
+        return node;
+    node_t *new_head = rev_resursive(node->next);
+    node->next->next = node;
+    return new_head;
+}
+
+void reverse_recursive(node_t **head)
+{
+    node_t *old_head = *head;
+    *head = rev_resursive(*head);
+    old_head->next = nullptr;
+}
+
 void print_list(node_t *head)
 {
     for (node_t *current = head; current; current = current->next)
@@ -98,7 +114,8 @@ int main(int argc, char const *argv[])
     swap_pair(&head);
     print_list(head);
 
-    reverse(&head);
+    // reverse(&head);
+    reverse_recursive(&head);
     print_list(head);
 
     return 0;
