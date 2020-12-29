@@ -78,6 +78,48 @@ void reverse_recursive(node_t **head)
     old_head->next = nullptr;
 }
 
+static void swap(node_t **v1, node_t **v2)
+{
+    node_t *tmp = *v1;
+    *v1 = *v2;
+    *v2 = tmp;
+}
+
+static void swap_node(node_t **n1_ind, node_t **n2_ind)
+{
+    if (n1_ind == n2_ind)
+        return;
+    if ((*n1_ind)->next == *n2_ind) {
+        swap(&(*n1_ind), &(*n2_ind)->next);
+        swap(&(*n1_ind), &(*n2_ind));
+    } else {
+        swap(&(*n1_ind), &(*n2_ind));
+        swap(&(*n1_ind)->next, &(*n2_ind)->next);
+    }
+}
+
+void fisher_yates_shuffle(node_t **head)
+{
+    int list_len = 0;
+    node_t *cur = *head;
+    while (cur) {
+        list_len += 1;
+        cur = cur->next;
+    }
+
+    while (--list_len) {
+        int random_step = rand() % (list_len+1);
+        if (random_step > 0) {
+            node_t **node = head;
+            while (random_step--) {
+                node = &(*node)->next;
+            }
+            swap_node(head, node);
+        }
+        head = &(*head)->next;
+    }
+}
+
 void print_list(node_t *head)
 {
     for (node_t *current = head; current; current = current->next)
@@ -117,6 +159,14 @@ int main(int argc, char const *argv[])
     // reverse(&head);
     reverse_recursive(&head);
     print_list(head);
+
+    swap_node(&head, &(head->next));
+
+    for (int i = 0; i < 100; ++i) {
+        printf("fisher-yates %d\n", i);
+        fisher_yates_shuffle(&head);
+        print_list(head);
+    }
 
     return 0;
 }
